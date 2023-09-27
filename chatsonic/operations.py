@@ -7,11 +7,15 @@ from connectors.core.connector import get_logger, ConnectorError
 from .constants import LOGGER_NAME
 
 logger = get_logger(LOGGER_NAME)
-#logger.setLevel(logging.DEBUG) # Uncomment to enable local debug
+
+
+# logger.setLevel(logging.DEBUG) # Uncomment to enable local debug
 
 
 class ChatSonic:
-    supported_languages = ["en","nl","fr","de","it","pl","es","ru","ja","zh","bg","cs","da","el","hu","lt","lv","ro","sk","sl","sv","fi","et"]
+    supported_languages = ["en", "nl", "fr", "de", "it", "pl", "es", "ru", "ja", "zh", "bg", "cs", "da", "el", "hu",
+                           "lt", "lv", "ro", "sk", "sl", "sv", "fi", "et"]
+
     def __init__(
             self,
             *,
@@ -72,9 +76,11 @@ class ChatSonic:
             logger.exception(err)
             raise ConnectorError(err)
 
+
 def remove_tags(text):
     tag_stripped = BeautifulSoup(text, "html.parser").text
-    return re.sub(r'#\w+(\s+)?','',tag_stripped)
+    return re.sub(r'#\w+(\s+)?', '', tag_stripped)
+
 
 def prep_action_parameters(params):
     '''
@@ -86,11 +92,12 @@ def prep_action_parameters(params):
         if 'history_data' in paramters and len(paramters['history_data']) > 0:
             for msg in paramters['history_data']:
                 if msg['is_sent']:
-                    msg.update({'message':remove_tags(msg['message'])})
+                    msg.update({'message': remove_tags(msg['message'])})
         return paramters
     except Exception as Err:
         logger.error('Could not parse params [{0}] '.format(Err))
         raise ConnectorError(Err)
+
 
 def chat_completions(config, params):
     chatsonic = ChatSonic(api_key=config.get('api_key'), logger=logger)
